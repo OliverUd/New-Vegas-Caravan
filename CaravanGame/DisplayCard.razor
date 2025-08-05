@@ -1,0 +1,20 @@
+﻿<button class="card" style="@Style" @onclick="@CardClicked"><img class="image" src="@CardToShow.Image" /></button>
+
+@code {
+    [Parameter]
+    public required Card CardToShow { get; set; }
+
+    [Parameter]
+    public string Style { get; set; } = "";
+
+    [Parameter]
+    public int Position { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnClick { get; set; }
+
+    private async Task CardClicked()
+    {
+        await OnClick.InvokeAsync(Position);
+    }
+}

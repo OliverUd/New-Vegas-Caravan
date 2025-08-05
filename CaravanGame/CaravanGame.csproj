@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\CardImages\JokerClubs.svg" />
+    <None Include="wwwroot\CardImages\JokerDiamonds.svg" />
+    <None Include="wwwroot\CardImages\TenClubs.svg" />
+    <None Include="wwwroot\CardImages\TenDiamonds.svg" />
+    <None Include="wwwroot\CardImages\TenHearts.svg" />
+    <None Include="wwwroot\CardImages\TenSpades.svg" />
+    <None Include="wwwroot\CardImages\TwoClubs.svg" />
+    <None Include="wwwroot\CardImages\TwoDiamonds.svg" />
+    <None Include="wwwroot\CardImages\TwoHearts.svg" />
+    <None Include="wwwroot\CardImages\TwoSpades.svg" />
+    <None Include="wwwroot\CardImages\ThreeClubs.svg" />
+    <None Include="wwwroot\CardImages\ThreeDiamonds.svg" />
+    <None Include="wwwroot\CardImages\ThreeHearts.svg" />
+    <None Include="wwwroot\CardImages\ThreeSpades.svg" />
+    <None Include="wwwroot\CardImages\FourClubs.svg" />
+    <None Include="wwwroot\CardImages\FourDiamonds.svg" />
+    <None Include="wwwroot\CardImages\FourHearts.svg" />
+    <None Include="wwwroot\CardImages\FourSpades.svg" />
+    <None Include="wwwroot\CardImages\FiveClubs.svg" />
+    <None Include="wwwroot\CardImages\FiveDiamonds.svg" />
+    <None Include="wwwroot\CardImages\FiveHearts.svg" />
+    <None Include="wwwroot\CardImages\FiveSpades.svg" />
+    <None Include="wwwroot\CardImages\SixClubs.svg" />
+    <None Include="wwwroot\CardImages\SixDiamonds.svg" />
+    <None Include="wwwroot\CardImages\SixHearts.svg" />
+    <None Include="wwwroot\CardImages\SixSpades.svg" />
+    <None Include="wwwroot\CardImages\SevenClubs.svg" />
+    <None Include="wwwroot\CardImages\SevenDiamonds.svg" />
+    <None Include="wwwroot\CardImages\SevenHearts.svg" />
+    <None Include="wwwroot\CardImages\SevenSpades.svg" />
+    <None Include="wwwroot\CardImages\EightClubs.svg" />
+    <None Include="wwwroot\CardImages\EightDiamonds.svg" />
+    <None Include="wwwroot\CardImages\EightHearts.svg" />
+    <None Include="wwwroot\CardImages\EightSpades.svg" />
+    <None Include="wwwroot\CardImages\NineClubs.svg" />
+    <None Include="wwwroot\CardImages\NineDiamonds.svg" />
+    <None Include="wwwroot\CardImages\NineHearts.svg" />
+    <None Include="wwwroot\CardImages\NineSpades.svg" />
+    <None Include="wwwroot\CardImages\AceClubs.svg" />
+    <None Include="wwwroot\CardImages\AceDiamonds.svg" />
+    <None Include="wwwroot\CardImages\AceHearts.svg" />
+    <None Include="wwwroot\CardImages\AceSpades.svg" />
+    <None Include="wwwroot\CardImages\JackClubs.svg" />
+    <None Include="wwwroot\CardImages\JackDiamonds.svg" />
+    <None Include="wwwroot\CardImages\JackHearts.svg" />
+    <None Include="wwwroot\CardImages\JackSpades.svg" />
+    <None Include="wwwroot\CardImages\KingClubs.svg" />
+    <None Include="wwwroot\CardImages\KingDiamonds.svg" />
+    <None Include="wwwroot\CardImages\KingHearts.svg" />
+    <None Include="wwwroot\CardImages\KingSpades.svg" />
+    <None Include="wwwroot\CardImages\QueenClubs.svg" />
+    <None Include="wwwroot\CardImages\QueenDiamonds.svg" />
+    <None Include="wwwroot\CardImages\QueenHearts.svg" />
+    <None Include="wwwroot\CardImages\QueenSpades.svg" />
+  </ItemGroup>
+
+</Project>

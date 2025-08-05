@@ -1,0 +1,40 @@
+﻿@using System.Text
+<button class="caravan" Upper="@Upper.ToString()" @onclick="async () => { if (Caravan.Cards.Count == 0) await AddCard(0); }">
+    <div class="card-stack">
+        @for (int stack = 0; stack < Caravan.Cards.Count; stack++)
+        {
+            StringBuilder style = new(Upper ? "right: 0; bottom:" : "top:");
+            style.Append((stack * 6).ToString());
+            style.Append("%;");
+            Card baseCard = Caravan.Cards[stack].BaseCard;
+            <DisplayCard Style="@style.ToString()" CardToShow="@baseCard" Position="@stack" OnClick="AddCard"></DisplayCard>
+            @for (int card = 0; card < Caravan.Cards[stack].Modifiers.Count; card++)
+            {
+                StringBuilder sideStyle = new(style.ToString());
+                sideStyle.Append(Upper ? " right:" : "; left:");
+                sideStyle.Append(((card + 1) * 12).ToString());
+                sideStyle.Append('%');
+                Card modCard = Caravan.Cards[stack].Modifiers[card];
+                <DisplayCard Style="@sideStyle.ToString()" CardToShow="@modCard" Position="@stack" OnClick="AddCard"></DisplayCard>
+            }
+        }
+    </div>
+    <p>Total: @Caravan.Value</p>
+    @if (!Upper) { <button @onclick="() => Game.DiscardCaravan(Caravan)">Disgard Caravan</button> }
+</button>
+
+@code {
+    [Parameter]
+    public required bool Upper { get; set; }
+
+    [Parameter]
+    public required Caravan Caravan { get; set; }
+
+    [Parameter]
+    public EventCallback<Card> CardAdded { get; set; }
+
+    private async Task AddCard(int position)
+    {
+        if (Game.TryPlayCard(Game.Players[0], Caravan, position)) await CardAdded.InvokeAsync();
+    }
+}
