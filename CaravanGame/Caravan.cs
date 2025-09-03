@@ -1,4 +1,4 @@
-﻿namespace CaravanGame
+﻿ namespace CaravanGame
 {
     public class Caravan
     {
@@ -15,58 +15,58 @@
             {
                 for (int stack = 0; stack < Cards.Count; stack++)
                 {
-                    if (ValidMove(player, card, stack)) validMoves.Add(stack);
+                    if (ValidMove(new(player, this, card, stack))) validMoves.Add(stack);
                 }
             }
-            else if (ValidMove(player, card)) validMoves.Add(Cards.Count);
+            else if (ValidMove(new(player, this, card))) validMoves.Add(Cards.Count);
             return validMoves;
         }
 
-        public bool ValidMove(string player, Card? card, int position = -1)
+        public bool ValidMove(Move move)
         {
-            if (card is null) return false;
-            if (card.Value > CardValue.Ten)
+            if (move.Card.Value > CardValue.Ten)
             {
-                if (position == -1) throw new ArgumentException("Face cards must have a position specified");
+                if (move.Position is null) throw new ArgumentException("Face cards must have a position specified");
                 if (Cards.Count == 0) return false;
                 return true;
             }
 
-            if (Owner == player
+            if (Owner == move.Player
             && (Direction == Direction.None
-            || (Direction == Direction.Up && card.Value > Cards.Last().BaseCard.Value)
-            || (Direction == Direction.Down && card.Value < Cards.Last().BaseCard.Value)
-            || card.Suit == Cards.Last().BaseCard.Suit)) return true;
+            || (Direction == Direction.Up && move.Card.Value > Cards.Last().BaseCard.Value)
+            || (Direction == Direction.Down && move.Card.Value < Cards.Last().BaseCard.Value)
+            || move.Card.Suit == Cards.Last().BaseCard.Suit)) return true;
             return false;
         }
 
-        public Card? AddCard(Card card, int position = -1)
+        public Card? AddCard(Card card, int? position = null)
         {
             if (card.Value <= CardValue.Ten)
             {
                 if (Cards.Count > 0) Direction = card.Value > Cards.Last().BaseCard.Value ? Direction.Up : Direction.Down;
                 Cards.Add(new Stack(card));
-                Value += (int) card.Value;
+                Value += (int)card.Value;
             }
+            else if (position is null) throw new ArgumentException("Face cards must have a position specified");
             else switch (card.Value)
-            {
-                case CardValue.Jack:
-                    Value -= Cards[position].Value;
-                    Cards.RemoveAt(position);
-                    break;
-                case CardValue.Queen:
-                    Cards[position].Modifiers.Add(card);
-                    Direction = Direction == Direction.None ? Direction.None : Direction == Direction.Up ? Direction.Down : Direction.Up;
-                    break;
-                case CardValue.King:
-                    Cards[position].Modifiers.Add(card);
-                    Value += Cards[position].Value;
-                    break;
-                case CardValue.Joker:
-                    Cards[position].Modifiers.Add(card);
-                    Cards[position].NewJoker = true;
-                    return Cards[position].BaseCard;
-            }
+                {
+                    case CardValue.Jack:
+                        Value -= Cards[(int)position].Value;
+                        Cards.RemoveAt((int)position);
+                        break;
+                    case CardValue.Queen:
+                        Cards[(int)position].Modifiers.Add(card);
+                        Direction = Direction == Direction.None ? Direction.None : Direction == Direction.Up ? Direction.Down : Direction.Up;
+                        break;
+                    case CardValue.King:
+                        Cards[(int)position].Modifiers.Add(card);
+                        Value += Cards[(int)position].Value;
+                        break;
+                    case CardValue.Joker:
+                        Cards[(int)position].Modifiers.Add(card);
+                        Cards[(int)position].NewJoker = true;
+                        return Cards[(int)position].BaseCard;
+                }
             return null;
         }
 

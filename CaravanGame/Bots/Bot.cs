@@ -1,27 +1,23 @@
 ﻿namespace CaravanGame.Bots
 {
-    public class Bot
+    public abstract class Bot(string name, List<Card> hand, List<Caravan> caravans)
     {
-        public int Turns { get; set; } = 0;
-        public List<Card> Hand { get => Game.Hands[Game.Players[1]]; }
+        private string name = name;
+        private List<Card> hand = hand;
+        private List<Caravan> caravans = caravans;
 
-        public List<int>[,] FindValidMoves()
+        private List<int>[,] GetValidMoves()
         {
-            List<int>[,] validMoves = new List<int>[Hand.Count, 6];
-            for (int card = 0; card < Hand.Count; card++)
+            List<int>[,] validMoves = new List<int>[hand.Count, 6];
+            for (int card = 0; card < hand.Count; card++)
             {
-                int caravanCount = Hand[card].Value > CardValue.Ten ? 6 : 3;
-                for (int car = 0; car < caravanCount; car++)
+                int caravanCount = hand[card].Value > CardValue.Ten ? 6 : 3;
+                for (int caravan = 0; caravan < caravanCount; caravan++)
                 {
-                    validMoves[card, car].AddRange(Game.AllCaravans[car].ValidMoves(Game.Players[1], Hand[card]));
+                    validMoves[card, caravan].AddRange(caravans[caravan].ValidMoves(name, hand[card]));
                 }
             }
             return validMoves;
-        }
-
-        public float CaravanSellChance(Caravan caravan)
-        {
-            throw new NotImplementedException();
         }
 
         public void PlayFirstMoves()
@@ -29,9 +25,6 @@
 
         }
 
-        public void PlayMove()
-        {
-
-        }
+        public abstract Move ChooseMove();
     }
 }

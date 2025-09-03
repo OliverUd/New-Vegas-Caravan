@@ -33,21 +33,21 @@
             <DisplayCard Style="@style.ToString()" CardToShow="@Game.Hands["Player"][card]" Position="card" OnClick="ChangeSelected"></DisplayCard>
         }
     </div>
+    <button @onclick="TryDiscardCard">Discard Selected Card</button>
     <p>@Game.Winner</p>
 </div>
 
 @code
 {
-    private Bot? bot;
-
     private void ChangeSelected(int position)
     {
         Game.SelectedCard = Game.Hands["Player"].ElementAt(position);
     }
 
+    private void TryDiscardCard() { if (Game.CurrentPlayer == "Player") Game.DiscardCard(); }
+
     protected override Task OnInitializedAsync()
     {
-        //bot = new GreedyBot(Hands["AI"], Caravans);
         Game.Initialise();
 
         return base.OnInitializedAsync();
