@@ -15,21 +15,17 @@
             {
                 for (int stack = 0; stack < Cards.Count; stack++)
                 {
-                    if (ValidMove(new(player, this, card, stack))) validMoves.Add(stack);
+                    if (ValidMove(new(player, MoveType.PlayCard, this, card, stack))) validMoves.Add(stack);
                 }
             }
-            else if (ValidMove(new(player, this, card))) validMoves.Add(Cards.Count);
+            else if (ValidMove(new(player, MoveType.PlayCard, this, card))) validMoves.Add(Cards.Count);
             return validMoves;
         }
 
         public bool ValidMove(Move move)
         {
-            if (move.Card.Value > CardValue.Ten)
-            {
-                if (move.Position is null) throw new ArgumentException("Face cards must have a position specified");
-                if (Cards.Count == 0) return false;
-                return true;
-            }
+            if (move.Type == MoveType.DiscardCard) return true;
+            if (move.Type == MoveType.DiscardCaravan || move.Card!.Value > CardValue.Ten) return Cards.Count > 0;
 
             if (Owner == move.Player
             && (Direction == Direction.None

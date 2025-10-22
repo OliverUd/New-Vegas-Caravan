@@ -20,7 +20,7 @@
         }
     </div>
     <p>Total: @Caravan.Value</p>
-    @if (!Upper) { <button @onclick="TryDiscard">Disgard Caravan</button> }
+    @if (!Upper) { <button @onclick="TryDiscard">Discard Caravan</button> }
 </button>
 
 @code {
@@ -35,13 +35,12 @@
 
     private async Task TryAddCard(int position)
     {
-        if (Game.CurrentPlayer != Game.Players[0] || Game.SelectedCard is null) return;
-        if (Game.TryPlayMove(new Move(Game.Players[0], Caravan, Game.SelectedCard, position))) await CardAdded.InvokeAsync();
+        if (Game.SelectedCard is null) return;
+        if (Game.TryPlayMove(new Move(Game.Players[0], MoveType.PlayCard, Caravan, Game.SelectedCard, position))) await CardAdded.InvokeAsync();
     }
 
     private void TryDiscard()
     {
-        if (Game.CurrentPlayer != Game.Players[0]) return;
         Game.DiscardCaravan(Caravan);
     }
 }

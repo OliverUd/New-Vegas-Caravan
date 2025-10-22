@@ -32,7 +32,7 @@ public static class Game
 
     public static bool TryPlayMove(Move move)
     {
-        if (!move.Caravan.ValidMove(move)) return false;
+        if (move.Player != CurrentPlayer || !move.Caravan!.ValidMove(move)) return false;
         Card? joker = move.Caravan.AddCard(SelectedCard!, move.Position);
 
         Hands[CurrentPlayer].Remove(SelectedCard!);
@@ -63,6 +63,8 @@ public static class Game
         Winner = CheckWin();
         if (CurrentPlayer == Players[0])
         {
+            CurrentPlayer = Players[1];
+
 
         }
     }
@@ -141,10 +143,43 @@ public static class Game
     }
 }
 
-public class Move(string player, Caravan caravan, Card card, int? position = null)
+public enum MoveType
 {
-    public string Player { get; set; } = player;
-    public Caravan Caravan { get; set; } = caravan;
-    public Card Card { get; set; } = card;
-    public int? Position { get; set; } = position;
+    PlayCard,
+    DiscardCard,
+    DiscardCaravan
+}
+
+public class Move
+{
+    public readonly string Player;
+    public readonly MoveType Type;
+    public readonly Caravan? Caravan;
+    public readonly Card? Card;
+    public readonly int? Position;
+
+    public Move(string player, MoveType type, Caravan? caravan = null, Card? card = null, int? position = null)
+    {
+        Player = player;
+        Type = type;
+
+        switch (type)
+        {
+            case MoveType.DiscardCard:
+                if (card is null) throw new ArgumentException($"{nameof(card)} must not be null if {nameof(type)} is {nameof(MoveType.DiscardCard)}");
+                Card = card;
+                return;
+            case MoveType.DiscardCaravan:
+                if (caravan is null) throw new ArgumentException($"{nameof(caravan)} must not be null if {nameof(type)} is {nameof(MoveType.DiscardCaravan)}");
+                Caravan = caravan;
+                return;
+            case MoveType.PlayCard:
+                if (caravan is null || card is null) throw new ArgumentException($"{nameof(caravan)} and {nameof(card)} must not be null if {nameof(type)} is {nameof(MoveType.PlayCard)}");
+                if (position is null && card.Value > CardValue.Ten) throw new ArgumentException($"{nameof(position)} must have a value for face cards");
+                Caravan = caravan;
+                Card = card;
+                Position = position;
+                return;
+        }
+    }
 }
