@@ -6,9 +6,9 @@
         public int Value { get; private set; } = 0;
         public Direction Direction { get; private set; } = Direction.None;
         public bool Sold { get => Value >= 21 && Value <= 26; }
-        public required string Owner { get; set; }
+        public required Player Owner { get; set; }
 
-        public List<int> ValidMoves(string player, Card card)
+        public List<int> ValidMoves(Player player, Card card)
         {
             List<int> validMoves = [];
             if (card.Value > CardValue.Ten)

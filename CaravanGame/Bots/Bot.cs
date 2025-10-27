@@ -1,10 +1,8 @@
 ﻿namespace CaravanGame.Bots
 {
-    public abstract class Bot(string name, List<Card> hand, List<Caravan> caravans)
+    public abstract class Bot(Player player, List<Card> hand, List<Caravan> caravans)
     {
-        private string name = name;
-        private List<Card> hand = hand;
-        private List<Caravan> caravans = caravans;
+        private Player player = player;
 
         private List<int>[,] GetValidMoves()
         {
@@ -14,7 +12,7 @@
                 int caravanCount = hand[card].Value > CardValue.Ten ? 6 : 3;
                 for (int caravan = 0; caravan < caravanCount; caravan++)
                 {
-                    validMoves[card, caravan].AddRange(caravans[caravan].ValidMoves(name, hand[card]));
+                    validMoves[card, caravan].AddRange(caravans[caravan].ValidMoves(player, hand[card]));
                 }
             }
             return validMoves;

@@ -5,17 +5,17 @@
 
 <div class="board">
     <div class="row" style="grid-row: 1 / span 1">
-        <DisplayCaravan Caravan="@Game.Caravans["AI"][0]" Upper=true CardAdded="StateHasChanged"></DisplayCaravan>
-        <DisplayCaravan Caravan="@Game.Caravans["AI"][1]" Upper=true CardAdded="StateHasChanged"></DisplayCaravan>
-        <DisplayCaravan Caravan="@Game.Caravans["AI"][2]" Upper=true CardAdded="StateHasChanged"></DisplayCaravan>
+        <DisplayCaravan Caravan="@Game.Players[PlayerPosition.Top].Caravans[0]" Upper=true CardAdded="StateHasChanged"></DisplayCaravan>
+        <DisplayCaravan Caravan="@Game.Players[PlayerPosition.Top].Caravans[1]" Upper=true CardAdded="StateHasChanged"></DisplayCaravan>
+        <DisplayCaravan Caravan="@Game.Players[PlayerPosition.Top].Caravans[2]" Upper=true CardAdded="StateHasChanged"></DisplayCaravan>
     </div>
     <div class="row" style="grid-row: 2 / span 1">
-        <DisplayCaravan Caravan="@Game.Caravans["Player"][0]" Upper=false CardAdded="StateHasChanged"></DisplayCaravan>
-        <DisplayCaravan Caravan="@Game.Caravans["Player"][1]" Upper=false CardAdded="StateHasChanged"></DisplayCaravan>
-        <DisplayCaravan Caravan="@Game.Caravans["Player"][2]" Upper=false CardAdded="StateHasChanged"></DisplayCaravan>
+        <DisplayCaravan Caravan="@Game.Players[PlayerPosition.Bottom].Caravans[0]" Upper=false CardAdded="StateHasChanged"></DisplayCaravan>
+        <DisplayCaravan Caravan="@Game.Players[PlayerPosition.Bottom].Caravans[1]" Upper=false CardAdded="StateHasChanged"></DisplayCaravan>
+        <DisplayCaravan Caravan="@Game.Players[PlayerPosition.Bottom].Caravans[2]" Upper=false CardAdded="StateHasChanged"></DisplayCaravan>
     </div>
     <div class="hand" style="grid-row: 1 / span 1">
-        @for (int card = 0; card < Game.Hands["AI"].Count; card++) 
+        @for (int card = 0; card < Game.Players[PlayerPosition.Top].Hand.Count; card++)
         {
             StringBuilder style = new("width: 12.5%; bottom: 10%; left: ");
             style.Append(((card + 1) * 4).ToString());
@@ -24,13 +24,13 @@
         }
     </div>
     <div class="hand" style="grid-row: 2 / span 1">
-        @for (int card = 0; card < Game.Hands["Player"].Count; card++)
+        @for (int card = 0; card < Game.Players[PlayerPosition.Bottom].Hand.Count; card++)
         {
             StringBuilder style = new("width: 12.5%; top: 10%; left: ");
             style.Append(((card + 1) * 4).ToString());
             style.Append("%; ");
-            style.Append(Game.SelectedCard == Game.Hands["Player"][card] ? "top: 5%;" : "top: 10%");
-            <DisplayCard Style="@style.ToString()" CardToShow="@Game.Hands["Player"][card]" Position="card" OnClick="ChangeSelected"></DisplayCard>
+            style.Append(Game.SelectedCard == Game.Players[PlayerPosition.Bottom].Hand[card] ? "top: 5%;" : "top: 10%");
+            <DisplayCard Style="@style.ToString()" CardToShow="@Game.Players[PlayerPosition.Bottom].Hand[card]" Position="card" OnClick="ChangeSelected"></DisplayCard>
         }
     </div>
     <button @onclick="TryDiscardCard">Discard Selected Card</button>
@@ -41,15 +41,8 @@
 {
     private void ChangeSelected(int position)
     {
-        Game.SelectedCard = Game.Hands["Player"].ElementAt(position);
+        Game.SelectedCard = Game.Players[PlayerPosition.Bottom].Hand[position];
     }
 
-    private void TryDiscardCard() { if (Game.CurrentPlayer == "Player") Game.DiscardCard(); }
-
-    protected override Task OnInitializedAsync()
-    {
-        Game.Initialise();
-
-        return base.OnInitializedAsync();
-    }
+    private void TryDiscardCard() { if (Game.CurrentPlayer.Type == PlayerType.Human) Game.DiscardCard(); }
 }

@@ -29,11 +29,23 @@
             }
         }
 
-        public static Card[] GenerateDeck()
+        public static Card[] GenerateDeck(bool shuffle = false)
         {
             Card[] cards = new Card[54];
             foreach (int card in Enumerable.Range(0, 54)) { cards[card] = new((Suit)(card % 4), (CardValue)(card / 4 + 1)); }
+            if (shuffle) cards = (Card[])Shuffle(cards);
             return cards;
+        }
+
+        public static IList<T> Shuffle<T>(IList<T> list)
+        {
+            Random rand = new();
+            foreach (int item in Enumerable.Range(0, list.Count))
+            {
+                int swap = rand.Next(54);
+                (list[item], list[swap]) = (list[swap], list[item]);
+            }
+            return list;
         }
     }
 }

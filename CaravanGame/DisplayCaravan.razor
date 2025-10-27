@@ -36,7 +36,7 @@
     private async Task TryAddCard(int position)
     {
         if (Game.SelectedCard is null) return;
-        if (Game.TryPlayMove(new Move(Game.Players[0], MoveType.PlayCard, Caravan, Game.SelectedCard, position))) await CardAdded.InvokeAsync();
+        if (Game.TryPlayMove(new Move(Game.Players[PlayerPosition.Bottom], MoveType.PlayCard, Caravan, Game.SelectedCard, position))) await CardAdded.InvokeAsync();
     }
 
     private void TryDiscard()

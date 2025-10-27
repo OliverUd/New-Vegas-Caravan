@@ -1,32 +1,12 @@
-﻿using CaravanGame.Bots;
-
-namespace CaravanGame;
+﻿namespace CaravanGame;
 
 public static class Game
 {
     public static Card? SelectedCard { get; set; }
 
-    public static readonly string[] Players = ["Player", "AI"];
+    public static readonly Dictionary<PlayerPosition, Player> Players = new() { { PlayerPosition.Top, new(PlayerPosition.Top, PlayerType.AI) }, { PlayerPosition.Bottom, new(PlayerPosition.Bottom, PlayerType.Human) } };
 
-    public static string CurrentPlayer { get; private set; } = Players[0];
-
-    public static Bot Bot { get; private set; }
-
-    public static Dictionary<string, Queue<Card>> Decks { get; } = new(2);
-    public static Dictionary<string, List<Card>> Hands { get; } = new(2);
-    public static Caravan[] AllCaravans { get; } = [
-        new Caravan { Owner = Players[0] },
-        new Caravan { Owner = Players[0] },
-        new Caravan { Owner = Players[0] },
-        new Caravan { Owner = Players[1] },
-        new Caravan { Owner = Players[1] },
-        new Caravan { Owner = Players[1] }
-    ];
-    public static Dictionary<string, Caravan[]> Caravans { get; } = new()
-    {
-        { Players[0], AllCaravans.Take(3).ToArray() },
-        { Players[1], AllCaravans.Skip(3).ToArray() }
-    };
+    public static Player CurrentPlayer { get; private set; } = Players[PlayerPosition.Bottom];
 
     public static char Winner { get; set; } = 'N';
 
@@ -35,11 +15,15 @@ public static class Game
         if (move.Player != CurrentPlayer || !move.Caravan!.ValidMove(move)) return false;
         Card? joker = move.Caravan.AddCard(SelectedCard!, move.Position);
 
-        Hands[CurrentPlayer].Remove(SelectedCard!);
+        move.Player.Hand.Remove(SelectedCard!);
         SelectedCard = null;
-        if (Hands[CurrentPlayer].Count < 5 && Decks[CurrentPlayer].Count != 0) Hands[CurrentPlayer].Add(Decks[CurrentPlayer].Dequeue());
+        if (move.Player.Hand.Count < 5 && move.Player.Deck.Count != 0) move.Player.Hand.Add(move.Player.Deck.Dequeue());
 
-        if (joker is not null) foreach (Caravan caravan in AllCaravans) caravan.JokerRemove(joker);
+        if (joker is not null)
+        {
+            foreach (Caravan caravan in Players[PlayerPosition.Top].Caravans) caravan.JokerRemove(joker);
+            foreach (Caravan caravan in Players[PlayerPosition.Bottom].Caravans) caravan.JokerRemove(joker);
+        }
 
         NextTurn();
         return true;
@@ -53,7 +37,7 @@ public static class Game
 
     public static void DiscardCard()
     {
-        Hands[CurrentPlayer].Remove(SelectedCard!);
+        CurrentPlayer.Hand.Remove(SelectedCard!);
         SelectedCard = null;
         NextTurn();
     }
@@ -61,85 +45,28 @@ public static class Game
     public static void NextTurn()
     {
         Winner = CheckWin();
-        if (CurrentPlayer == Players[0])
+        if (CurrentPlayer == Players[PlayerPosition.Top])
         {
-            CurrentPlayer = Players[1];
-
-
-        }
+            CurrentPlayer = Players[PlayerPosition.Bottom];
+            if (CurrentPlayer.Type == PlayerType.Human) return;
+        } else CurrentPlayer = Players[PlayerPosition.Top];
     }
 
     public static char CheckWin()
     {
         short winner = 0;
-        Caravan aiCaravan, playerCaravan;
+        Caravan topCaravan, bottomCaravan;
         for (int caravan = 0; caravan < 3; caravan++)
         {
-            playerCaravan = Caravans["Player"][caravan];
-            aiCaravan = Caravans["AI"][caravan];
-            if (!(aiCaravan.Value == playerCaravan.Value) && (aiCaravan.Sold || playerCaravan.Sold))
+            topCaravan = Players[PlayerPosition.Top].Caravans[caravan];
+            bottomCaravan = Players[PlayerPosition.Bottom].Caravans[caravan];
+            if (!(topCaravan.Value == bottomCaravan.Value) && (topCaravan.Sold || bottomCaravan.Sold))
             {
-                winner += Convert.ToInt16(aiCaravan.Value < playerCaravan.Value);
+                winner += Convert.ToInt16(topCaravan.Value < bottomCaravan.Value);
             }
             else return 'N';
         }
         return winner >= 2 ? 'P' : 'A';
-    }
-
-    public static IList<T> Shuffle<T>(IList<T> list)
-    {
-        Random rand = new();
-        foreach (int item in Enumerable.Range(0, list.Count))
-        {
-            int swap = rand.Next(54);
-            (list[item], list[swap]) = (list[swap], list[item]);
-        }
-        return list;
-    }
-
-    public static void Initialise()
-    {
-        InitialiseDecks();
-        InitialiseHands();
-    }
-
-    public static void InitialiseDecks(bool shuffle = true)
-    {
-        Card[] cards = Card.GenerateDeck();
-        foreach (string player in Players)
-        {
-            if (shuffle) cards = (Card[]) Shuffle(cards);
-            Decks[player] = new(cards);
-        }
-    }
-
-    public static void InitialiseHands()
-    {
-        foreach (string player in Players)
-        {
-            Hands[player] = new(8);
-            int numCards = 0;
-            foreach (int card in Enumerable.Range(0, 8))
-            {
-                Hands[player].Add(Decks[player].Dequeue());
-                if (Hands[player][card].Value <= CardValue.Ten)
-                {
-                    (Hands[player][card], Hands[player][numCards]) = (Hands[player][numCards], Hands[player][card]);
-                    numCards++;
-                }
-            }
-            while (numCards < 3)
-            {
-                Card card = Decks[player].Peek();
-                if (card.Value <= CardValue.Ten)
-                {
-                    Decks[player].Enqueue(Hands[player][7]);
-                    Hands[player].RemoveAt(7);
-                    Hands[player].Insert(numCards, card);
-                    numCards++;
-                }
-            }
-        }
     }
 }
 
@@ -152,13 +79,13 @@ public enum MoveType
 
 public class Move
 {
-    public readonly string Player;
+    public readonly Player Player;
     public readonly MoveType Type;
     public readonly Caravan? Caravan;
     public readonly Card? Card;
     public readonly int? Position;
 
-    public Move(string player, MoveType type, Caravan? caravan = null, Card? card = null, int? position = null)
+    public Move(Player player, MoveType type, Caravan? caravan = null, Card? card = null, int? position = null)
     {
         Player = player;
         Type = type;
