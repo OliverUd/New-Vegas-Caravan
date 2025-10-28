@@ -41,6 +41,6 @@
 
     private void TryDiscard()
     {
-        Game.DiscardCaravan(Caravan);
+        Game.TryPlayMove(new Move(Game.Players[PlayerPosition.Bottom], MoveType.DiscardCaravan, Caravan));
     }
 }

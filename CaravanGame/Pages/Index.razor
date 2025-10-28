@@ -44,5 +44,5 @@
         Game.SelectedCard = Game.Players[PlayerPosition.Bottom].Hand[position];
     }
 
-    private void TryDiscardCard() { if (Game.CurrentPlayer.Type == PlayerType.Human) Game.DiscardCard(); }
+    private void TryDiscardCard() { Game.TryPlayMove(new Move(Game.Players[PlayerPosition.Bottom], MoveType.DiscardCard, card: Game.SelectedCard)); }
 }

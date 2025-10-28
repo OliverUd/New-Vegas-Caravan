@@ -12,34 +12,38 @@ public static class Game
 
     public static bool TryPlayMove(Move move)
     {
-        if (move.Player != CurrentPlayer || !move.Caravan!.ValidMove(move)) return false;
-        Card? joker = move.Caravan.AddCard(SelectedCard!, move.Position);
+        if (move.Player != CurrentPlayer) return false;
 
-        move.Player.Hand.Remove(SelectedCard!);
-        SelectedCard = null;
-        if (move.Player.Hand.Count < 5 && move.Player.Deck.Count != 0) move.Player.Hand.Add(move.Player.Deck.Dequeue());
-
-        if (joker is not null)
+        if (move.Type == MoveType.DiscardCard)
         {
-            foreach (Caravan caravan in Players[PlayerPosition.Top].Caravans) caravan.JokerRemove(joker);
-            foreach (Caravan caravan in Players[PlayerPosition.Bottom].Caravans) caravan.JokerRemove(joker);
+            move.Player.Hand.Remove(move.Card!);
+            if (move.Card == SelectedCard) SelectedCard = null;
+        }
+
+        else if (!move.Caravan!.ValidMove(move)) return false;
+
+        else if (move.Type == MoveType.DiscardCaravan)
+        {
+            move.Caravan.Reset();
+        }
+
+        else
+        {
+            Card? joker = move.Caravan.AddCard(move.Card!, move.Position);
+
+            move.Player.Hand.Remove(move.Card!);
+            if (move.Card == SelectedCard) SelectedCard = null;
+            if (move.Player.Hand.Count < 5 && move.Player.Deck.Count != 0) move.Player.Hand.Add(move.Player.Deck.Dequeue());
+
+            if (joker is not null)
+            {
+                foreach (Caravan caravan in Players[PlayerPosition.Top].Caravans) caravan.JokerRemove(joker);
+                foreach (Caravan caravan in Players[PlayerPosition.Bottom].Caravans) caravan.JokerRemove(joker);
+            }
         }
 
         NextTurn();
         return true;
-    }
-
-    public static void DiscardCaravan(Caravan caravan)
-    {
-        caravan.Reset();
-        NextTurn();
-    }
-
-    public static void DiscardCard()
-    {
-        CurrentPlayer.Hand.Remove(SelectedCard!);
-        SelectedCard = null;
-        NextTurn();
     }
 
     public static void NextTurn()
